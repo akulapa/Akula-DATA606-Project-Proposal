@@ -1,0 +1,106 @@
+---
+title: "DATA 606 Project Proposal"
+author: "Pavan Akula"
+date: "March 5, 2017"
+output: html_document
+---
+
+Load the libraries
+```{r , echo=T, message=F}
+library(utils)
+library(knitr)
+library(dplyr)
+```
+
+### Data Preparation
+
+#### Introduction
+
+The Global Financial Inclusion (Global Findex) database, launched by the World Bank in 2011, provides comparable indicators showing how people around the world save, borrow, make payments, and manage risk. The 2014 edition of the database contain 142 economies with 146688 observations of 86 variables. 
+
+##### Data Dictionary
+
+Following is sample of variables within data file **_micro_world.csv_**. Variables may contain the recorded results of a direct question asked, or be derived in some way. The number of variables and the number of data points (cases) are summarized for each variable.
+
+```{r , echo=T}
+# Load Data Dictionary
+wd <- getwd()
+ddf <- paste(wd,"//Global-Findex-Data-Dictionary.csv",sep = "")
+findex.data.dictionary <- read.csv(ddf, header = T)
+kable(tail(findex.data.dictionary,10))
+```
+
+##### Sample Data
+
+```{r , echo=T}
+# Load Data
+
+wd <- getwd()
+df <- paste(wd,"//micro_world.csv",sep = "")
+findex.raw.data <- read.csv(df, header = T)
+kable(tail(findex.raw.data,10))
+```
+
+```{r, echo=T}
+# There are a lot of columns in this dataset. This will subset the dataset to include only the observations we are interested in. Rename column name accordingly.
+
+data.filter1 <- findex.raw.data %>%
+  filter(regionwb %in% c("Middle East","East Asia & Pacific","South Asia"))
+
+data.filter1 <-  rename(data.filter1, gender = female)
+
+```
+
+### Research question(s)
+
+Research would be more specific to economies that fall under the regions Middle East, East Asia & Pacific and South Asia.
+
+  1. How does account ownership vary by individual characteristics?
+    a. Role of household income to have an account.
+    b. Role of gender to have an account.
+    c. Role of age to have an account.
+    d. Account ownership by economy(country) in the region.
+    
+  2. How do people receive wage payments?
+    a. Role of gender in receiving wage payments (in cash only and deposited into the account). Does female respondents receive wage in cash only more often than male respondents?
+    b. Does gender has any effect on wages paid more often in cash only vs. deposited into the account?
+    c. Does age has any effect on wages paid more often in cash only vs. deposited into the account?
+    d. How often does high household income respondents get paid in cash only?
+    e. How does economies(countries) in the region fair in wage payments (in cash only vs. deposited into the account)? Does one economy pay wages more often in cash only vs. deposited into the account?
+    
+### Cases
+
+Each case represents a person at least 15 years of age from the economy(country) and region. There are total of 146688 observations across the world and 27343 observation from the regions Middle East, East Asia & Pacific and South Asia.
+
+### Data collection 
+
+The Global Financial Inclusion (Global Findex) Database is the world's most comprehensive gauge of how adults around the world save, borrow, make payments and manage risk. Launched in 2011 with the support of the Bill & Melinda Gates Foundation. Three years later, the 2014 Global Findex provides an update on the indicators collected in 2011. The Global Findex indicators are drawn from survey data collected by Gallup, Inc. over the 2014 calendar year. [*World - Global Financial Inclusion (Global Findex) Database 2014*](http://microdata.worldbank.org/index.php/catalog/2512) is maintained by World Bank.
+
+### Type of study 
+
+This is an observational study.
+
+### Data source
+
+Development Research Group, Finance and Private Sector Development Unit - World Bank. Additional information regarding World - Global Financial Inclusion (Global Findex) Database 2014 can be found at http://www.worldbank.org/en/programs/globalfindex.
+
+The reference citation for the 2014 Global Findex data is Asli Demirguc-Kunt, Leora Klapper, Dorothe Singer, Peter Van Oudheusden [*The Global Findex Database 2014: Measuring Financial Inclusion around the World*](http://documents.worldbank.org/curated/en/187761468179367706/pdf/WPS7255.pdf). Policy Research Working Paper 7255.
+
+### Response 
+
+The response variables are account ownership and wage payments. All the values are numerical.
+
+
+### Explanatory 
+
+The explanatory variables are count of populations based on age, gender, household income and economy. All the values are numerical.
+
+
+### Relevant summary statistics 
+
+```{r , echo=T}
+
+data.filter1 %>% 
+  group_by (gender) %>% 
+  summarise(count = n())
+```
